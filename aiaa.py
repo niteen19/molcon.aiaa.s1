@@ -1,29 +1,32 @@
-import errno
+
 import json
-from pprint import pprint
+
 import xml.etree.ElementTree as ET
-import xml.etree.ElementTree as ET1
+
 from bson.json_util import dumps
 from json import loads
 
-from werkzeug.exceptions import abort
 
-import status
+
+
 from flask import Flask, jsonify, request, make_response
 from pymongo import MongoClient, response
-import pandas as pd
+
 import pymongo
 app= Flask(__name__)
 @app.route("/aiaa-s1m/export/<string:a>",methods=['GET'])
 def getdb(a):
-    connection_url= "mongodb://aiaaadmin:aiaa_2k190102_MCPL@139.162.209.89:27017/admin"
+
+    #connection_url= "mongodb://aiaaadmin:aiaa_2k190102_MCPL@139.162.209.89:27017/admin"
+    connection_url = "mongodb://aiaaadmin:aiaa_2k190102_MCPL@192.168.207.141:27017/admin"
+
     client=MongoClient(connection_url)
     dbname=client['manuscript_notifier_test']
-    print(dbname)
+
 
     args = request.args
     forceArg = args.get("force", default=False, type=bool)
-    print(forceArg)
+
 
 
     collection_name=dbname['document_logs']
@@ -33,11 +36,13 @@ def getdb(a):
     jsndata=dumps(cursor)
     args = request.args
     forceArg = args.get("force", default=False, type=bool)
-    print(forceArg)
+
     if forceArg == False:
-        print ("zero")
+        pass
+        #print ("zero")
     elif forceArg == True:
-        print("one")
+        pass
+        #print("one")
     if len(jsndata)<=2:
 
         return  json.dumps({'status':'500', 'message':'docid not found'}), 500
@@ -70,7 +75,7 @@ def getdb(a):
                 tree = ET.ElementTree(rootXmlTag)
 
 
-                tree.write("C:\\Users\\niteen\\Documents\\Lightshot\\data4.xml")
+                tree.write("/home/AIAA/AIAAOutgoing/S1M-Exports/{}.xml".format(a))
                 collection_name.update({'docId': "6.2002-840"}, {'$set': {'status': 'done'}})
                 return json.dumps({'status':'200', 'message':"status is updated to done "}),200
 
@@ -85,7 +90,7 @@ def getdb(a):
 
             allTopics = jsonObj[0]['classification']['topics']
             for i in allTopics:
-                print(type(i))
+                #print(type(i))
                 subjectXmlTag = ET.SubElement(subjectGroupXmlTag, 'subject')
                 subjectXmlTag.text = i['name']
 
@@ -95,13 +100,16 @@ def getdb(a):
                 keywordGroupXmlTag.set('kwd-group-type', "MC_Keywords_1.0")
                 kwdGroups = jsonObj[0]['classification']['textForms']
                 for i in kwdGroups:
-                    print(i)
+                   # print(i)
                     kwdTag = ET.SubElement(keywordGroupXmlTag, "kwd");
                     kwdTag.text = i
 
                 tree = ET.ElementTree(rootXmlTag)
 
-                tree.write("C:\\Users\\niteen\\Documents\\Lightshot\\a.xml")
+
+
+                tree.write("/home/AIAA/AIAAOutgoing/S1M-Exports/{}.xml".format(a))
+
 
             #collection_name.update({'docId': "6.2002-840"}, {'$set': {'status': 'done'}})
             return json.dumps({'status':'500', 'message':"status is updated to done and file generated again "}), 200
@@ -116,4 +124,5 @@ def getdb(a):
 
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True,host = "0.0.0.0", port = 8888)
+    #app.run(debug=True)
