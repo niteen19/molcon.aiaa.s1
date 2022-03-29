@@ -70,7 +70,7 @@ def getdb(a):
                 tree = ET.ElementTree(rootXmlTag)
 
 
-                tree.write("data4.xml")
+                tree.write("C:\\Users\\niteen\\Documents\\Lightshot\\data4.xml")
                 collection_name.update({'docId': "6.2002-840"}, {'$set': {'status': 'done'}})
                 return json.dumps({'status':'200', 'message':"status is updated to done "}),200
 
@@ -101,7 +101,7 @@ def getdb(a):
 
                 tree = ET.ElementTree(rootXmlTag)
 
-                tree.write("data8.xml")
+                tree.write("C:\\Users\\niteen\\Documents\\Lightshot\\a.xml")
 
             #collection_name.update({'docId': "6.2002-840"}, {'$set': {'status': 'done'}})
             return json.dumps({'status':'500', 'message':"status is updated to done and file generated again "}), 200
